@@ -1,34 +1,28 @@
 package com.example.myapplication.view
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.R
 import com.example.myapplication.controller.PersonagemController
 import com.example.myapplication.model.Classe
 import com.example.myapplication.model.Raca
 
+// ----------------------- Tela Inicial -----------------------
 @Composable
 fun TelaInicial(onStartJourney: () -> Unit) {
-    // Gradiente para borda com sensação de fogo
     val borderBrush = Brush.linearGradient(
         colors = listOf(Color.Red, Color(0xFFFFA500), Color.Yellow)
     )
@@ -53,15 +47,6 @@ fun TelaInicial(onStartJourney: () -> Unit) {
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            Image(
-                painter = painterResource(id = R.drawable.dragon),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(250.dp)
-                    .clip(CircleShape)
-                    .border(2.dp, Color.White, CircleShape)
-            )
-
             Button(
                 onClick = onStartJourney,
                 modifier = Modifier.padding(top = 32.dp),
@@ -77,74 +62,88 @@ fun TelaInicial(onStartJourney: () -> Unit) {
     }
 }
 
+// ----------------------- Tela Nome e Idade -----------------------
 @Composable
-fun PersonagemScreen(controller: PersonagemController) {
+fun TelaNomeIdade(controller: PersonagemController, onNext: () -> Unit) {
     val personagem by controller.personagem
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-        Text(
-            text = "Criação de Personagem",
-            fontSize = 28.sp,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
         OutlinedTextField(
             value = personagem.nome,
             onValueChange = { controller.atualizarNome(it) },
             label = { Text("Nome do Personagem") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+            modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = if (personagem.idade == 0) "" else personagem.idade.toString(),
             onValueChange = { controller.atualizarIdade(it) },
             label = { Text("Idade do Personagem") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
         )
-        Text(text = "Escolha o estilo de atributos:", fontSize = 20.sp)
+
+        val mensagem = if ((personagem.nome.length + personagem.idade) > 99)
+            "Seja bem vindo a este mundo... novamente"
+        else
+            "Seja bem vindo a este mundo"
+
+        Text(
+            text = mensagem,
+            modifier = Modifier.padding(top = 16.dp),
+            fontSize = 18.sp,
+            color = Color.Red
+        )
+
+        Button(onClick = onNext, modifier = Modifier.padding(top = 24.dp)) {
+            Text("Próximo")
+        }
+    }
+}
+
+// ----------------------- Tela Raça -----------------------
+@Composable
+fun TelaRaca(controller: PersonagemController, onNext: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(
+            "Escolha sua Raça",
+            fontSize = 20.sp,
+            modifier = Modifier.padding(16.dp),
+            color = Color.Red
+        )
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Button(onClick = { controller.gerarAtributos(1) }) { Text("Clássico") }
-            Button(onClick = { controller.gerarAtributos(2) }) { Text("Aventureiro") }
-            Button(onClick = { controller.gerarAtributos(3) }) { Text("Heróico") }
+            Button(onClick = { controller.atualizarRaca(Raca.HUMANO); onNext() }) { Text("Humano") }
+            Button(onClick = { controller.atualizarRaca(Raca.ELFO); onNext() }) { Text("Elfo") }
+            Button(onClick = { controller.atualizarRaca(Raca.ANAO); onNext() }) { Text("Anão") }
         }
-        Divider(modifier = Modifier.padding(vertical = 16.dp))
-        Text(text = "Seus Atributos:", fontSize = 20.sp)
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Column {
-                Text("Força: ${personagem.atributos.forca}", fontSize = 16.sp)
-                Text("Destreza: ${personagem.atributos.destreza}", fontSize = 16.sp)
-                Text("Constituição: ${personagem.atributos.constituicao}", fontSize = 16.sp)
-            }
-            Column {
-                Text("Inteligência: ${personagem.atributos.inteligencia}", fontSize = 16.sp)
-                Text("Sabedoria: ${personagem.atributos.sabedoria}", fontSize = 16.sp)
-                Text("Carisma: ${personagem.atributos.carisma}", fontSize = 16.sp)
-            }
-        }
-        Divider(modifier = Modifier.padding(vertical = 16.dp))
-        Text(text = "Escolha sua Raça:", fontSize = 20.sp)
+    }
+}
+
+// ----------------------- Tela Classe -----------------------
+@Composable
+fun TelaClasse(controller: PersonagemController) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(
+            "Escolha sua Classe",
+            fontSize = 20.sp,
+            modifier = Modifier.padding(16.dp),
+            color = Color.Red
+        )
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-        ) {
-            Button(onClick = { controller.atualizarRaca(Raca.HUMANO) }) { Text("Humano") }
-            Button(onClick = { controller.atualizarRaca(Raca.ELFO) }) { Text("Elfo") }
-            Button(onClick = { controller.atualizarRaca(Raca.ANAO) }) { Text("Anão") }
-        }
-        Text(text = "Escolha sua Classe:", fontSize = 20.sp)
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Button(onClick = { controller.atualizarClasse(Classe.GUERREIRO) }) { Text("Guerreiro") }
             Button(onClick = { controller.atualizarClasse(Classe.LADRAO) }) { Text("Ladrão") }
@@ -153,21 +152,50 @@ fun PersonagemScreen(controller: PersonagemController) {
     }
 }
 
+// ----------------------- Fluxo de Navegação 4 Etapas -----------------------
+@Composable
+fun PersonagemFlow(controller: PersonagemController) {
+    var etapa by remember { mutableStateOf(1) }
+
+    when (etapa) {
+        1 -> TelaInicial { etapa = 2 }
+        2 -> TelaNomeIdade(controller) { etapa = 3 }
+        3 -> TelaRaca(controller) { etapa = 4 }
+        4 -> TelaClasse(controller)
+    }
+}
+
+// ----------------------- Previews -----------------------
 @Preview(showBackground = true)
 @Composable
-fun PersonagemScreenPreview() {
-    val controller = PersonagemController().apply {
-        atualizarNome("Teste")
-        atualizarIdade("20")
-        atualizarRaca(Raca.HUMANO)
-        atualizarClasse(Classe.GUERREIRO)
-        gerarAtributos(1)
-    }
-    PersonagemScreen(controller = controller)
+fun PreviewTelaInicial() {
+    TelaInicial(onStartJourney = {})
 }
 
 @Preview(showBackground = true)
 @Composable
-fun TelaInicialPreview() {
-    TelaInicial(onStartJourney = {})
+fun PreviewTelaNomeIdade() {
+    val controller = PersonagemController()
+    TelaNomeIdade(controller = controller, onNext = {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewTelaRaca() {
+    val controller = PersonagemController()
+    TelaRaca(controller = controller, onNext = {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewTelaClasse() {
+    val controller = PersonagemController()
+    TelaClasse(controller = controller)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewPersonagemFlow() {
+    val controller = PersonagemController()
+    PersonagemFlow(controller = controller)
 }
