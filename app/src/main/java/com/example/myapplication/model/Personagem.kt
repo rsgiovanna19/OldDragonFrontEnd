@@ -5,7 +5,8 @@ data class Personagem(
     val idade: Int,
     var raca: Raca? = null,
     var classe: Classe? = null,
-    val atributos: Atributos = Atributos()
+    val atributos: Atributos = Atributos(),
+    var estiloAventura: Int = 0 // 1 = Clássico, 2 = Aventureiro, 3 = Heróico
 ) {
     // Funções de resumo serão chamadas pela View para exibir informações
     fun getResumo(): String {

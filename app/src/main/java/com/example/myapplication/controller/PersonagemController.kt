@@ -2,6 +2,8 @@ package com.example.myapplication.controller
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import com.example.myapplication.model.*
 import kotlin.random.Random
 
@@ -9,8 +11,10 @@ class PersonagemController {
     private val _personagem = mutableStateOf(Personagem(nome = "Novo Herói", idade = 0))
     val personagem: State<Personagem> get() = _personagem
 
-    fun gerarAtributos(estilo: Int) {
-        val novosAtributos = when (estilo) {
+    var estiloAventura by mutableStateOf(1) // 1 = Clássico, 2 = Aventureiro, 3 = Heróico
+
+    fun gerarAtributos() {
+        val novosAtributos = when (estiloAventura) {
             1, 2 -> Atributos(
                 forca = rolar3d6(),
                 destreza = rolar3d6(),

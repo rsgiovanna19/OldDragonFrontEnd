@@ -10,6 +10,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.Image
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.res.painterResource
@@ -26,6 +28,9 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.controller.PersonagemController
 import com.example.myapplication.model.Classe
 import com.example.myapplication.model.Raca
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 
 // ----------------------- Tela Inicial -----------------------
 @Composable
@@ -79,6 +84,111 @@ fun TelaInicial(onStartJourney: () -> Unit) {
         }
     }
 }
+
+// ----------------------- Tela Estilo -----------------------
+@Composable
+fun TelaEstilo(controller: PersonagemController, onNext: () -> Unit) {
+    val personagem by controller.personagem
+
+    val fireBrush = Brush.verticalGradient(
+        colors = listOf(Color(0xFF8B0000), Color.Red, Color(0xFFFFA500), Color.Yellow)
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(fireBrush)
+            .padding(24.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                "Escolha o estilo da aventura",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Yellow,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
+
+            // Botões de estilo
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(
+                    onClick = { controller.estiloAventura = 1; controller.gerarAtributos() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow)
+                ) { Text("Clássico", fontSize = 20.sp) }
+
+                Button(
+                    onClick = { controller.estiloAventura = 2; controller.gerarAtributos() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow)
+                ) { Text("Aventureiro", fontSize = 20.sp) }
+
+                Button(
+                    onClick = { controller.estiloAventura = 3; controller.gerarAtributos() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow)
+                ) { Text("Heróico", fontSize = 20.sp) }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Exibir atributos rolados dentro de Boxes
+            if (personagem.atributos != null) {
+                val atributosMap = mapOf(
+                    "FORÇA" to personagem.atributos.forca,
+                    "DESTREZA" to personagem.atributos.destreza,
+                    "CONSTITUIÇÃO" to personagem.atributos.constituicao,
+                    "INTELIGÊNCIA" to personagem.atributos.inteligencia,
+                    "SABEDORIA" to personagem.atributos.sabedoria,
+                    "CARISMA" to personagem.atributos.carisma
+                )
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    atributosMap.forEach { (tipo, valor) ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color.White.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
+                                .padding(vertical = 12.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "$tipo: $valor",
+                                fontSize = 18.sp,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Botão “Próximo”
+                Button(
+                    onClick = onNext,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow, contentColor = Color.Red)
+                ) {
+                    Text("Próximo", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
+
 
 // ----------------------- Tela Nome e Idade -----------------------
 
@@ -202,7 +312,6 @@ fun TelaNomeIdade(controller: PersonagemController, onNext: () -> Unit) {
 fun TelaAtributos(controller: PersonagemController) {
     val personagem by controller.personagem
 
-    // Fundo gradiente fogo
     val fireBrush = Brush.verticalGradient(
         colors = listOf(Color(0xFF8B0000), Color.Red, Color(0xFFFFA500), Color.Yellow)
     )
@@ -218,7 +327,6 @@ fun TelaAtributos(controller: PersonagemController) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-
             Text(
                 text = "Resumo de Atributos",
                 fontSize = 28.sp,
@@ -228,7 +336,6 @@ fun TelaAtributos(controller: PersonagemController) {
                 textAlign = TextAlign.Center
             )
 
-            // Mostrar cada atributo com descrição
             val atributos = personagem.atributos
             val atributosMap = mapOf(
                 "Força" to atributos.forca,
@@ -254,16 +361,12 @@ fun TelaAtributos(controller: PersonagemController) {
                 }
             }
 
-            // Botão de fechar ou continuar (pode voltar ao menu principal)
             Button(
-                onClick = { /* ação de continuar ou fechar */ },
+                onClick = { /* voltar ao menu principal ou avançar */ },
                 modifier = Modifier
                     .padding(top = 32.dp)
                     .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.Yellow
-                ),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
@@ -276,6 +379,7 @@ fun TelaAtributos(controller: PersonagemController) {
         }
     }
 }
+
 
 
 // ----------------------- Tela Raça -----------------------
@@ -427,6 +531,100 @@ fun TelaClasse(controller: PersonagemController, onNext: () -> Unit) {
     }
 }
 
+@Composable
+fun TelaResumo(controller: PersonagemController) {
+    val personagem by controller.personagem
+
+    val fireBrush = Brush.verticalGradient(
+        colors = listOf(Color(0xFF8B0000), Color.Red, Color(0xFFFFA500), Color.Yellow)
+    )
+
+    // Mapa com informações do usuário, seguro para nulos
+    val infoMap = mapOf(
+        "Nome" to personagem.nome,
+        "Idade" to personagem.idade.toString(),
+        "Estilo" to when (personagem.estiloAventura) {
+            1 -> "Clássico"
+            2 -> "Aventureiro"
+            3 -> "Heróico"
+            else -> "Não selecionado"
+        },
+        "Raça" to (personagem.raca?.toString()?.lowercase()?.replaceFirstChar { it.uppercaseChar() } ?: "Não selecionada"),
+        "Classe" to (personagem.classe?.toString()?.lowercase()?.replaceFirstChar { it.uppercaseChar() } ?: "Não selecionada")
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(fireBrush)
+            .padding(24.dp)
+    ) {
+        // Scroll caso a tela seja pequena
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            // Box de saudação
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Yellow.copy(alpha = 0.8f), shape = RoundedCornerShape(12.dp))
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Caro ${personagem.nome}, aqui está o resumo da sua aventura!",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Boxes com informações do usuário
+            infoMap.forEach { (chave, valor) ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
+                        .padding(vertical = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "$chave: $valor",
+                        fontSize = 18.sp,
+                        color = Color.Black,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Botão final (pode ser para reiniciar ou sair)
+            Button(
+                onClick = { /* ação de reiniciar ou finalizar */ },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = "Finalizar",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
 
 // ----------------------- Fluxo de Navegação 4 Etapas -----------------------
 @Composable
@@ -436,11 +634,13 @@ fun PersonagemFlow(controller: PersonagemController) {
     when (etapa) {
         1 -> TelaInicial { etapa = 2 }
         2 -> TelaNomeIdade(controller) { etapa = 3 }
-        3 -> TelaRaca(controller) { etapa = 4 }
-        4 -> TelaClasse(controller) { etapa = 5 }
-        5 -> TelaAtributos(controller)
+        3 -> TelaEstilo(controller) { etapa = 4 }
+        4 -> TelaRaca(controller) { etapa = 5 }
+        5 -> TelaClasse(controller) { etapa = 6 }
+        6 -> TelaResumo(controller)
     }
 }
+
 
 
 // ----------------------- Previews -----------------------
@@ -449,6 +649,14 @@ fun PersonagemFlow(controller: PersonagemController) {
 fun PreviewTelaInicial() {
     TelaInicial(onStartJourney = {})
 }
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewTelaEstilo() {
+    val controller = PersonagemController()
+    TelaEstilo(controller = controller, onNext = {})
+}
+
 
 @Preview(showBackground = true)
 @Composable
@@ -469,4 +677,11 @@ fun PreviewTelaRaca() {
 fun PreviewTelaClasse() {
     val controller = PersonagemController()
     TelaClasse(controller = controller, onNext = {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewTelaResumo() {
+    val controller = PersonagemController();
+    TelaResumo(controller)
 }
