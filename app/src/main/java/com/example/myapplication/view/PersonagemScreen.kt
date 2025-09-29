@@ -89,106 +89,50 @@ fun TelaInicial(onStartJourney: () -> Unit) {
 @Composable
 fun TelaEstilo(controller: PersonagemController, onNext: () -> Unit) {
     val personagem by controller.personagem
-
-    val fireBrush = Brush.verticalGradient(
-        colors = listOf(Color(0xFF8B0000), Color.Red, Color(0xFFFFA500), Color.Yellow)
-    )
+    val fireBrush = Brush.verticalGradient(colors = listOf(Color(0xFF8B0000), Color.Red, Color(0xFFFFA500), Color.Yellow))
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(fireBrush)
-            .padding(24.dp)
+        modifier = Modifier.fillMaxSize().background(fireBrush).padding(24.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text(
-                "Escolha o estilo da aventura",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Yellow,
-                modifier = Modifier.padding(bottom = 32.dp)
-            )
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top, modifier = Modifier.fillMaxSize()) {
+            Text("Escolha o estilo da aventura", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.Yellow, modifier = Modifier.padding(bottom = 32.dp))
 
-            // Botões de estilo
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Button(
-                    onClick = { controller.estiloAventura = 1; controller.gerarAtributos() },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow)
-                ) { Text("Clássico", fontSize = 20.sp) }
-
-                Button(
-                    onClick = { controller.estiloAventura = 2; controller.gerarAtributos() },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow)
-                ) { Text("Aventureiro", fontSize = 20.sp) }
-
-                Button(
-                    onClick = { controller.estiloAventura = 3; controller.gerarAtributos() },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow)
-                ) { Text("Heróico", fontSize = 20.sp) }
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { controller.atualizarEstilo(1) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow)) { Text("Clássico", fontSize = 20.sp) }
+                Button(onClick = { controller.atualizarEstilo(2) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow)) { Text("Aventureiro", fontSize = 20.sp) }
+                Button(onClick = { controller.atualizarEstilo(3) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow)) { Text("Heróico", fontSize = 20.sp) }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Exibir atributos rolados dentro de Boxes
-            if (personagem.atributos != null) {
+            // Mostrar atributos se já foram gerados
+            personagem.atributos?.let { atributos ->
                 val atributosMap = mapOf(
-                    "FORÇA" to personagem.atributos.forca,
-                    "DESTREZA" to personagem.atributos.destreza,
-                    "CONSTITUIÇÃO" to personagem.atributos.constituicao,
-                    "INTELIGÊNCIA" to personagem.atributos.inteligencia,
-                    "SABEDORIA" to personagem.atributos.sabedoria,
-                    "CARISMA" to personagem.atributos.carisma
+                    "FORÇA" to atributos.forca,
+                    "DESTREZA" to atributos.destreza,
+                    "CONSTITUIÇÃO" to atributos.constituicao,
+                    "INTELIGÊNCIA" to atributos.inteligencia,
+                    "SABEDORIA" to atributos.sabedoria,
+                    "CARISMA" to atributos.carisma
                 )
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp), horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                     atributosMap.forEach { (tipo, valor) ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color.White.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
-                                .padding(vertical = 12.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "$tipo: $valor",
-                                fontSize = 18.sp,
-                                color = Color.Black,
-                                textAlign = TextAlign.Center
-                            )
+                        Box(modifier = Modifier.fillMaxWidth().background(Color.White.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp)).padding(vertical = 12.dp), contentAlignment = Alignment.Center) {
+                            Text("$tipo: $valor", fontSize = 18.sp, color = Color.Black, textAlign = TextAlign.Center)
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Botão “Próximo”
-                Button(
-                    onClick = onNext,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow, contentColor = Color.Red)
-                ) {
+                Button(onClick = onNext, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow, contentColor = Color.Red)) {
                     Text("Próximo", fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
     }
 }
-
-
 
 // ----------------------- Tela Nome e Idade -----------------------
 
@@ -530,16 +474,11 @@ fun TelaClasse(controller: PersonagemController, onNext: () -> Unit) {
         }
     }
 }
-
 @Composable
-fun TelaResumo(controller: PersonagemController) {
+fun TelaResumo(controller: PersonagemController, onFinish: () -> Unit) {
     val personagem by controller.personagem
+    val fireBrush = Brush.verticalGradient(colors = listOf(Color(0xFF8B0000), Color.Red, Color(0xFFFFA500), Color.Yellow))
 
-    val fireBrush = Brush.verticalGradient(
-        colors = listOf(Color(0xFF8B0000), Color.Red, Color(0xFFFFA500), Color.Yellow)
-    )
-
-    // Mapa com informações do usuário, seguro para nulos
     val infoMap = mapOf(
         "Nome" to personagem.nome,
         "Idade" to personagem.idade.toString(),
@@ -549,83 +488,33 @@ fun TelaResumo(controller: PersonagemController) {
             3 -> "Heróico"
             else -> "Não selecionado"
         },
-        "Raça" to (personagem.raca?.toString()?.lowercase()?.replaceFirstChar { it.uppercaseChar() } ?: "Não selecionada"),
-        "Classe" to (personagem.classe?.toString()?.lowercase()?.replaceFirstChar { it.uppercaseChar() } ?: "Não selecionada")
+        "Raça" to (personagem.raca?.name?.replaceFirstChar { it.uppercaseChar() } ?: "Não selecionada"),
+        "Classe" to (personagem.classe?.name?.replaceFirstChar { it.uppercaseChar() } ?: "Não selecionada")
     )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(fireBrush)
-            .padding(24.dp)
-    ) {
-        // Scroll caso a tela seja pequena
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            // Box de saudação
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Yellow.copy(alpha = 0.8f), shape = RoundedCornerShape(12.dp))
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Caro ${personagem.nome}, aqui está o resumo da sua aventura!",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    textAlign = TextAlign.Center
-                )
+    Box(modifier = Modifier.fillMaxSize().background(fireBrush).padding(24.dp)) {
+        Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top) {
+            Box(modifier = Modifier.fillMaxWidth().background(Color.Yellow.copy(alpha = 0.8f), shape = RoundedCornerShape(12.dp)).padding(16.dp), contentAlignment = Alignment.Center) {
+                Text("Caro ${personagem.nome}, aqui está o resumo da sua aventura!", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black, textAlign = TextAlign.Center)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Boxes com informações do usuário
             infoMap.forEach { (chave, valor) ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
-                        .padding(vertical = 12.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "$chave: $valor",
-                        fontSize = 18.sp,
-                        color = Color.Black,
-                        textAlign = TextAlign.Center
-                    )
+                Box(modifier = Modifier.fillMaxWidth().background(Color.White.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp)).padding(vertical = 12.dp), contentAlignment = Alignment.Center) {
+                    Text("$chave: $valor", fontSize = 18.sp, color = Color.Black, textAlign = TextAlign.Center)
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Botão final (pode ser para reiniciar ou sair)
-            Button(
-                onClick = { /* ação de reiniciar ou finalizar */ },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = "Finalizar",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
+            Button(onClick = onFinish, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow), shape = RoundedCornerShape(12.dp)) {
+                Text("Finalizar", fontSize = 22.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
             }
         }
     }
 }
-
 // ----------------------- Fluxo de Navegação 4 Etapas -----------------------
 @Composable
 fun PersonagemFlow(controller: PersonagemController) {
@@ -637,7 +526,7 @@ fun PersonagemFlow(controller: PersonagemController) {
         3 -> TelaEstilo(controller) { etapa = 4 }
         4 -> TelaRaca(controller) { etapa = 5 }
         5 -> TelaClasse(controller) { etapa = 6 }
-        6 -> TelaResumo(controller)
+        6 -> TelaResumo(controller) { etapa = 1 }
     }
 }
 
@@ -683,5 +572,5 @@ fun PreviewTelaClasse() {
 @Composable
 fun PreviewTelaResumo() {
     val controller = PersonagemController();
-    TelaResumo(controller)
+    TelaResumo(controller = controller, onFinish = {})
 }
