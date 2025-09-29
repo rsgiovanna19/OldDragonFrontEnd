@@ -85,7 +85,7 @@ fun TelaInicial(onStartJourney: () -> Unit) {
     }
 }
 
-// ----------------------- Tela Estilo -----------------------
+// ----------------------- Segunda tela que controla o estilo da aventura -----------------------
 @Composable
 fun TelaEstilo(controller: PersonagemController, onNext: () -> Unit) {
     val personagem by controller.personagem
@@ -134,13 +134,13 @@ fun TelaEstilo(controller: PersonagemController, onNext: () -> Unit) {
     }
 }
 
-// ----------------------- Tela Nome e Idade -----------------------
+// ----------------------- Tela para o usuário colocar o Nome e Idade -----------------------
 
 @Composable
 fun TelaNomeIdade(controller: PersonagemController, onNext: () -> Unit) {
     val personagem by controller.personagem
 
-    // 🔥 Gradiente de fundo estilo fogo
+    //gradiente de fundo
     val fireBrush = Brush.verticalGradient(
         colors = listOf(Color(0xFF8B0000), Color.Red, Color(0xFFFFA500), Color.Yellow)
     )
@@ -156,7 +156,7 @@ fun TelaNomeIdade(controller: PersonagemController, onNext: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-
+                //para nome do personagem
             OutlinedTextField(
                 value = personagem.nome,
                 onValueChange = { controller.atualizarNome(it) },
@@ -164,7 +164,7 @@ fun TelaNomeIdade(controller: PersonagemController, onNext: () -> Unit) {
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         Text("Nome do Personagem", fontSize = 20.sp, color = Color.Black, textAlign = TextAlign.Center)
                     }
-                },
+                },  //para nome
                 placeholder = {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text("Digite o nome", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontSize = 18.sp, color = Color(0x80000000))
@@ -184,7 +184,7 @@ fun TelaNomeIdade(controller: PersonagemController, onNext: () -> Unit) {
                 singleLine = true
             )
 
-            // Campo IDADE com label e placeholder centralizados
+            // Campo idade
             OutlinedTextField(
                 value = if (personagem.idade == 0) "" else personagem.idade.toString(),
                 onValueChange = { controller.atualizarIdade(it) },
@@ -213,7 +213,7 @@ fun TelaNomeIdade(controller: PersonagemController, onNext: () -> Unit) {
                 singleLine = true
             )
 
-            // Mensagem dinâmica (centralizada)
+            // Mensagem dinâmica da idade
             val mensagem = if ((personagem.nome.length + personagem.idade) > 99)
                 "Seja bem vindo a este mundo... novamente"
             else
@@ -252,6 +252,7 @@ fun TelaNomeIdade(controller: PersonagemController, onNext: () -> Unit) {
     }
 }
 
+// ----------------------- Tela para escolha de atributos -----------------------
 @Composable
 fun TelaAtributos(controller: PersonagemController) {
     val personagem by controller.personagem
@@ -326,10 +327,10 @@ fun TelaAtributos(controller: PersonagemController) {
 
 
 
-// ----------------------- Tela Raça -----------------------
+// ----------------------- Tela da raça -----------------------
 @Composable
 fun TelaRaca(controller: PersonagemController, onNext: () -> Unit) {
-    // 🔥 Gradiente de fundo estilo fogo
+    //seguindo a logica de padrão de cores
     val fireBrush = Brush.verticalGradient(
         colors = listOf(Color(0xFF8B0000), Color.Red, Color(0xFFFFA500), Color.Yellow)
     )
@@ -345,7 +346,7 @@ fun TelaRaca(controller: PersonagemController, onNext: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            // 🔥 Título
+            // Título
             Text(
                 text = "Escolha sua Raça",
                 fontSize = 28.sp,
@@ -354,7 +355,7 @@ fun TelaRaca(controller: PersonagemController, onNext: () -> Unit) {
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            // 🔥 Botões de raça
+            // Botões de raça
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -401,7 +402,7 @@ fun TelaRaca(controller: PersonagemController, onNext: () -> Unit) {
 }
 
 
-// ----------------------- Tela Classe -----------------------
+// ----------------------- Tela para escolha da classe -----------------------
 @Composable
 fun TelaClasse(controller: PersonagemController, onNext: () -> Unit) {
     val fireBrush = Brush.verticalGradient(
@@ -474,6 +475,7 @@ fun TelaClasse(controller: PersonagemController, onNext: () -> Unit) {
         }
     }
 }
+// ----------------------- Tela para o usuário visualizar o resumo -----------------------
 @Composable
 fun TelaResumo(controller: PersonagemController, onFinish: () -> Unit) {
     val personagem by controller.personagem
@@ -530,9 +532,7 @@ fun PersonagemFlow(controller: PersonagemController) {
     }
 }
 
-
-
-// ----------------------- Previews -----------------------
+// ----------------------- Previews (sem emulador, nao é possivel interação) -----------------------
 @Preview(showBackground = true)
 @Composable
 fun PreviewTelaInicial() {
@@ -545,7 +545,6 @@ fun PreviewTelaEstilo() {
     val controller = PersonagemController()
     TelaEstilo(controller = controller, onNext = {})
 }
-
 
 @Preview(showBackground = true)
 @Composable
