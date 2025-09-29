@@ -1,5 +1,7 @@
 package com.example.myapplication.view
 
+
+//imports necessários
 import androidx.compose.foundation.background
 import com.example.myapplication.R
 import androidx.compose.foundation.border
