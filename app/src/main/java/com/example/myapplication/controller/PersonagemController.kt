@@ -1,16 +1,27 @@
 package com.example.myapplication.controller
 
+//importações p utilização
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import com.example.myapplication.model.*
 import kotlin.random.Random
 
 class PersonagemController {
-    private val _personagem = mutableStateOf(Personagem(nome = "Novo Herói", idade = 0))
+    private val _personagem = mutableStateOf(Personagem(nome = "Novo Herói", idade = 0, estiloAventura = 1))
     val personagem: State<Personagem> get() = _personagem
 
-    fun gerarAtributos(estilo: Int) {
-        val novosAtributos = when (estilo) {
+    var estiloAventura by mutableStateOf(1) // 1 = Clássico, 2 = Aventureiro, 3 = Heróico
+
+    fun atualizarEstilo(estilo: Int) {
+        estiloAventura = estilo
+        _personagem.value = _personagem.value.copy(estiloAventura = estilo)
+        gerarAtributos()
+    }
+
+    fun gerarAtributos() {
+        val novosAtributos = when (estiloAventura) {
             1, 2 -> Atributos(
                 forca = rolar3d6(),
                 destreza = rolar3d6(),
