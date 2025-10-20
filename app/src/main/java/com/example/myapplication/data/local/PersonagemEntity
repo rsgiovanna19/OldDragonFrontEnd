@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import com.example.myapplication.model.Atributos
 
 @Entity(tableName = "personagens")
-data class `PersonagemEntity.kt`(
+data class `PersonagemEntity`(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val nome: String,
     val idade: Int,

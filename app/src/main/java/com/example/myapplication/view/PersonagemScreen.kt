@@ -537,7 +537,6 @@ fun TelaResumo(controller: PersonagemController, onFinish: () -> Unit) {
         }
         }
     }
-}
 // ----------------------- Fluxo de Navegação 4 Etapas -----------------------
 @Composable
 fun PersonagemFlow(controller: PersonagemController) {

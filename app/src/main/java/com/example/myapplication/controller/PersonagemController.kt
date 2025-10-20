@@ -6,7 +6,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
-import com.example.myapplication.data.local.AppDatabase
 import com.example.myapplication.data.local.toEntity
 import com.example.myapplication.data.local.toModel
 import androidx.compose.runtime.State
