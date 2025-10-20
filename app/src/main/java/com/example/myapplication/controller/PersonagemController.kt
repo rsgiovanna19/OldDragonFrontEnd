@@ -1,6 +1,14 @@
 package com.example.myapplication.controller
 
 //importações p utilização
+import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import com.example.myapplication.data.local.AppDatabase
+import com.example.myapplication.data.local.toEntity
+import com.example.myapplication.data.local.toModel
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -58,6 +66,36 @@ class PersonagemController {
     fun atualizarClasse(novaClasse: Classe) {
         _personagem.value = _personagem.value.copy(classe = novaClasse)
     }
+
+    /**
+     * Salva o personagem atual no DB local usando Room.
+     * onSaved roda no background; para atualizar UI use runOnUiThread/Toast no compose com context.
+     */
+    fun salvarLocal(context: Context, onSaved: (Long) -> Unit = {}) {
+        val db = AppDatabase.getInstance(context)
+        val dao = db.personagemDao()
+        val entity = personagem.value.toEntity()
+        CoroutineScope(Dispatchers.IO).launch {
+            val id = dao.insert(entity)
+            onSaved(id)
+        }
+    }
+
+    fun carregarUltimoSalvoOnce(context: Context, onLoaded: (Boolean) -> Unit = {}) {
+        val db = AppDatabase.getInstance(context)
+        val dao = db.personagemDao()
+        CoroutineScope(Dispatchers.IO).launch {
+            val list = dao.getAll().first() // lê uma vez
+            if (list.isNotEmpty()) {
+                val first = list.first()
+                _personagem.value = first.toModel()
+                onLoaded(true)
+            } else {
+                onLoaded(false)
+            }
+        }
+    }
+
 
     private fun rolarD6() = Random.nextInt(1, 7)
     private fun rolar3d6() = rolarD6() + rolarD6() + rolarD6()

@@ -2,6 +2,8 @@ package com.example.myapplication.view
 
 
 //imports necessários
+import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
 import androidx.compose.foundation.background
 import com.example.myapplication.R
 import androidx.compose.foundation.border
@@ -513,9 +515,26 @@ fun TelaResumo(controller: PersonagemController, onFinish: () -> Unit) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Button(onClick = onFinish, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow), shape = RoundedCornerShape(12.dp)) {
+            val context = LocalContext.current
+
+            Button(
+                onClick = {
+                    // salva o personagem atual no DB
+                    controller.salvarLocal(context) { id ->
+                        // onSaved roda em background; para mostrar Toast precisamos do Main Thread
+                        // Toast pode ser chamado diretamente aqui (é seguro):
+                        Toast.makeText(context, "Personagem salvo (id=$id)", Toast.LENGTH_SHORT).show()
+                        onFinish() // volta/encerra fluxo
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Yellow),
+                shape = RoundedCornerShape(12.dp)
+            ) {
                 Text("Finalizar", fontSize = 22.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
             }
+
+        }
         }
     }
 }
