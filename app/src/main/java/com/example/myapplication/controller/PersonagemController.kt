@@ -1,6 +1,7 @@
 package com.example.myapplication.controller
 
 //importações p utilização
+import com.example.myapplication.data.local.AppDatabase
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
