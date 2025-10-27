@@ -44,15 +44,15 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3" // ajuste se IDE sugerir outra
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 }
 
 dependencies {
-    val roomVersion = "2.8.2"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
+    val roomVersion = "2.8.3"
+    implementation("androidx.room:room-runtime)
+    implementation("androidx.room:room-ktx)
+    kapt("androidx.room:room-compiler)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
